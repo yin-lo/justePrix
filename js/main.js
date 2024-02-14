@@ -1,38 +1,86 @@
-// Le nombre max
-const MAX_NUMBER = 500; 
-
-// Le nombre cherché
-const searchedNumber = Math.round(Math.random() * MAX_NUMBER);
-
-// Le nombre saisi
-let enteredNumber = parseInt(prompt('Quel est le nombre à trouver ?'));
-
-// Le nombre d'essais
-let attempts = 1;
-
-// Tant que le nombre saisi n'est pas bon on redemande un nombre
-while (enteredNumber !== searchedNumber) {
-    // on vérifie que l'utilisateur a répondu, sinon on sort de la boucle
-    if(!enteredNumber){
-        break;
-    }
-    // on précise si le nombre recherché est inférieur ou supérieur au nombre saisi
-    if (enteredNumber < searchedNumber) {
-        enteredNumber = parseInt(prompt('C\'est plus'));
-    }
-    else {
-        enteredNumber = parseInt(prompt('C\'est moins'));
-    }
-    // on incrémente le nombre d'essais
-    attempts += 1;
+/* ----------avec un prof particulier-------- */
+// fonction pour créer le nombre aléatoire :
+// ceil arroundit au supérieur donc il ne prendra jamais zéro
+// min et max permet d'avoir toujours min < max
+function getRandomNumber(a = 100, b = 500) {
+	const min = Math.min(a, b);
+	const max = Math.max(a, b);
+	return Math.ceil(Math.random() * (max - min) + min);
 }
 
-// on est sorti de la boucle, c'est soit que le nombre saisi est bien le nombre cherché
-// soit que le joueur n'a pas répondu et que enteredNumber est 'falsy'
-if(enteredNumber){
-    // on affiche un message de victoire
-    alert('Bravo ! C\'était bien ' + searchedNumber + ' - Nombre d\'essais : ' + attempts);
-} else {
-    // on affiche un message d'abandon
-    alert('Vous abandonnez ? Dommage...');
+// Objet de configuration avec le nombre à trouver (justPrice) et le nombre d'essai (score):
+const game = {
+	justPrice: getRandomNumber(),
+	score: 0,
+	parties: [],
+};
+
+// afficher la solution, chut on triche !
+console.log(game.justPrice);
+
+// initialiser le jeu en demandant à l'utilisateur :
+let indice = `Trouvez le juste prix !`;
+
+// la fonction d'essai pour savoir si on se rapproche de la bonne réponse :
+function essay(tentative) {
+	// bonus : indiquer le nombre de tentatives et le nombre essayé dans la console :
+	console.log(`Tentative ${game.score} : ${tentative}`);
+
+	// condition pour sortir de la boucle : trouver le bon prix ! OU si on annule:
+	if (tentative === game.justPrice || tentative === 0) {
+		return false;
+	}
+	// pour rester dans la boucle, il ne faut pas trouver le bon résultat :
+	if (tentative < game.justPrice) {
+		indice = `${tentative} est trop petit. Réessayez !`;
+	} else {
+		indice = `${tentative} est trop grand. Réessayez !`;
+	}
+	return true;
 }
+
+//* fonction du jeu global (play) si on veut recommencer en boucle après avoir trouvé la bonne solution une première fois:
+// à la fin d'une partie, stocker le score dans le tableau et réinitialiser la prochaine manche à zéro:
+function endPlay(note) {
+	game.parties.push(note);
+	game.score = 0;
+	game.justPrice = getRandomNumber();
+	console.log(game.justPrice);
+	indice = `Trouvez le nouveau juste prix !`
+}
+
+function play() {
+	// boucle pour relancer les manches jusqu'à trouver la bonne réponse pour une partie :
+	do {
+		do {
+			// cela permet de ne pas augmenter le score si l'utilisateur est un gros naze et rentre une lettre à la place d'un nombre :
+			tryNumber = Number(prompt(indice));
+			indice = `Ceci n'est pas un nombre. Veuillez ne renseigner que des chiffres.`;
+		} while (isNaN(tryNumber));
+		// incrémente le nombre d'essais
+		game.score++;
+	} while (essay(tryNumber));
+
+	// affiche des messages différents si on annule (équivaut à 0) ou si on a la bonne réponse
+	if (tryNumber === 0) {
+		alert(`Dommage que tu abandonnes`);
+		endPlay(`Abandon`);
+	} else {
+		alert(`Bravo ! Vous avez trouvé le juste prix de ${game.justPrice} € en ${game.score} essai(s) !`);
+		endPlay(game.score);
+	}
+	// laisser le choix au joueur de rejouer ou d'arrêter(confirm)
+	if (confirm(`Souhaitez-vous rejouer ?`)) {
+		play();
+	}
+}
+
+play();
+
+// afficher les résultats à la fin de chaque partie terminée
+let resume = `Voici le résumé de vos parties :\n`;
+game.parties.forEach((score, partie) => {
+	resume = resume + `\nPartie ${partie + 1} : ${score}${score === 'Abandon' ? '' : ' essai(s)'}`;
+});
+alert(resume);
+console.log(resume);
