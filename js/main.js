@@ -1,6 +1,7 @@
 /* ----------avec un prof particulier-------- */
+
 // fonction pour créer le nombre aléatoire :
-// ceil arroundit au supérieur donc il ne prendra jamais zéro
+// ceil arrondit au supérieur donc il ne prendra jamais zéro
 // min et max permet d'avoir toujours min < max
 function getRandomNumber(a = 100, b = 500) {
 	const min = Math.min(a, b);
