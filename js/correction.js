@@ -2,17 +2,11 @@
 const MAX_NUMBER = 500;
 
 const randomNumber = function (min = 10, max = 20) {
-	/* let generate = Math.round(Math.random() * MAX_NUMBER); //* genere un nombre
-  return generate; //* retourne ce nombre */
-	//* entre 10 et 20
+		//* entre 10 et 20
 	const randomBase = Math.random();
 	//* genere entre 0 et 1
 	const randomNumber = randomBase * (max - min) + min;
-	//* (0.149 * (20-10)) + min
-	//* max - min = 20 - 10 = 10
-	//* 0*10 = 0 + min = 10
-	//* 1*10 = 10 + min = 20
-	//* ex de generation: au minimum 10, 12.56, 15.55... au maximum 20
+	
 	const roundedRandomNumber = Math.round(randomNumber);
 	return roundedRandomNumber;
 };
